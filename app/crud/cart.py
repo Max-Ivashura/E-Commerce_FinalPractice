@@ -14,6 +14,11 @@ def create_cart(db: Session, user_id: int):
     db.refresh(new_cart)
     return new_cart
 
+def get_user_cart(db: Session, user_id: int):
+    # Находим корзину пользователя по user_id
+    cart = db.query(Cart).filter(Cart.user_id == user_id).first()
+    return cart
+
 def add_product_to_cart(db: Session, cart_id: int, product_id: int, quantity: int):
     cart = db.query(Cart).get(cart_id)
     if not cart:

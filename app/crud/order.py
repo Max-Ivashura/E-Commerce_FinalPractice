@@ -58,3 +58,26 @@ def delete_order(db: Session, order_id: int):
     db.delete(order)
     db.commit()
     return order
+
+
+def get_user_orders(db: Session, user_id: int):
+    # Получаем все заказы пользователя
+    return db.query(Order).filter(Order.user_id == user_id).all()
+
+
+def get_order_items(db: Session, order_id: int):
+    # Получаем все позиции заказа
+    order_items = db.query(OrderItem).filter(OrderItem.order_id == order_id).all()
+
+    # Добавляем информацию о товарах
+    result = []
+    for item in order_items:
+        product = db.query(Product).get(item.product_id)
+        if product:
+            result.append({
+                'product_name': product.name,
+                'quantity': item.quantity,
+                'price': product.price,
+                'total': product.price * item.quantity
+            })
+    return result
